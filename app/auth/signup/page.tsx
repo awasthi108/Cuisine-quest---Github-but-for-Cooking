@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/components/auth-provider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,8 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 
 export default function SignUpPage() {
-  const { signup } = useAuth()
-  const { toast } = useToast()
+  const [mounted, setMounted] = useState(false)
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -22,8 +21,16 @@ export default function SignUpPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
+  const auth = useAuth()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!auth) return
 
     if (password !== confirmPassword) {
       toast({
@@ -46,7 +53,7 @@ export default function SignUpPage() {
     setIsLoading(true)
 
     try {
-      const success = await signup(username, email, password)
+      const success = await auth.signup(username, email, password)
       if (success) {
         toast({
           title: "Welcome to Cuisine Quest! 🎉",
@@ -68,6 +75,10 @@ export default function SignUpPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (!mounted) {
+    return null // Prevent SSR issues
   }
 
   return (
@@ -181,7 +192,7 @@ export default function SignUpPage() {
 
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !auth}
               className="w-full h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium"
             >
               {isLoading ? (
