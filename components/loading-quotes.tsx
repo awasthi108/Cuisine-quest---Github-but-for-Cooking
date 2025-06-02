@@ -20,24 +20,22 @@ const cookingQuotes = [
 
 interface LoadingQuotesProps {
   isLoading: boolean
-  hideForGraffiti?: boolean
 }
 
-export function LoadingQuotes({ isLoading, hideForGraffiti = false }: LoadingQuotesProps) {
+export function LoadingQuotes({ isLoading }: LoadingQuotesProps) {
   const [currentQuote, setCurrentQuote] = useState("")
 
   useEffect(() => {
-    if (isLoading && !hideForGraffiti) {
+    if (isLoading) {
       const randomQuote = cookingQuotes[Math.floor(Math.random() * cookingQuotes.length)]
       setCurrentQuote(randomQuote)
     }
-  }, [isLoading, hideForGraffiti])
+  }, [isLoading])
 
-  // Don't show loading quotes if graffiti effect should be prioritized
-  if (!isLoading || hideForGraffiti) return null
+  if (!isLoading) return null
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100 flex items-center justify-center z-40">
+    <div className="fixed inset-0 bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100 flex items-center justify-center z-50">
       <div className="text-center space-y-6 p-8">
         <div className="relative">
           <div className="w-20 h-20 mx-auto bg-gradient-to-r from-orange-400 to-orange-600 rounded-full flex items-center justify-center animate-bounce">
