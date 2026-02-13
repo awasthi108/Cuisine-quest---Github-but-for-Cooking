@@ -1,89 +1,107 @@
-"use client"
+'use client'
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useAuth } from "@/components/auth-provider"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, ChefHat } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import Link from "next/link"
+import { useState } from 'react'
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth'
+import { auth, db } from '@/lib/firebase'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Eye, EyeOff, ChefHat } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
+import { doc, setDoc } from 'firebase/firestore'
 
 export default function SignUpPage() {
-  const [mounted, setMounted] = useState(false)
-  const [username, setUsername] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [displayName, setDisplayName] = useState('')
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
-  const auth = useAuth()
+  const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!auth) return
+    setLoading(true)
 
     if (password !== confirmPassword) {
       toast({
         title: "Passwords don't match",
-        description: "Please make sure your passwords match.",
-        variant: "destructive",
+        description: 'Please make sure your passwords match.',
+        variant: 'destructive',
       })
+      setLoading(false)
       return
     }
-
-    if (password.length < 6) {
-      toast({
-        title: "Password too short",
-        description: "Password must be at least 6 characters long.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    setIsLoading(true)
 
     try {
-      const success = await auth.signup(username, email, password)
-      if (success) {
-        toast({
-          title: "Welcome to Cuisine Quest! 🎉",
-          description: "Your account has been created successfully.",
-        })
-      } else {
-        toast({
-          title: "Sign up failed",
-          description: "User already exists or invalid data. Please try again.",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      await updateProfile(userCredential.user, { displayName })
+
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        displayName,
+        email,
+        createdAt: new Date().toISOString(),
+        followers: [],
+        following: [],
+      })
+
       toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
+        title: 'Welcome to Cuisine Quest!',
+        description: 'Your account has been created successfully.',
+      })
+      router.push('/')
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
       })
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
-  if (!mounted) {
-    return null // Prevent SSR issues
+  const handleGoogleSignUp = async () => {
+    setLoading(true)
+
+    try {
+      const provider = new GoogleAuthProvider()
+      const result = await signInWithPopup(auth, provider)
+
+      await setDoc(doc(db, 'users', result.user.uid), {
+        uid: result.user.uid,
+        displayName: result.user.displayName,
+        email: result.user.email,
+        photoURL: result.user.photoURL,
+        createdAt: new Date().toISOString(),
+        followers: [],
+        following: [],
+      })
+
+      toast({
+        title: 'Welcome to Cuisine Quest!',
+        description: 'Your account has been created with Google.',
+      })
+      router.push('/')
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100 flex items-center justify-center p-4">
-      {/* Background Food Images */}
       <div className="absolute inset-0 overflow-hidden opacity-10">
         <div className="absolute top-10 left-10 w-32 h-32 bg-orange-200 rounded-full"></div>
         <div className="absolute top-32 right-20 w-24 h-24 bg-orange-300 rounded-full"></div>
@@ -107,17 +125,17 @@ export default function SignUpPage() {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleEmailSignUp} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-gray-700">
-                Username
+              <Label htmlFor="displayName" className="text-gray-700">
+                Full Name
               </Label>
               <Input
-                id="username"
+                id="displayName"
                 type="text"
-                placeholder="Choose a username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="John Doe"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
                 required
                 className="h-12 border-orange-200 focus:border-orange-400 focus:ring-orange-400"
               />
@@ -145,7 +163,7 @@ export default function SignUpPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Create a password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -171,7 +189,7 @@ export default function SignUpPage() {
               <div className="relative">
                 <Input
                   id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -192,16 +210,16 @@ export default function SignUpPage() {
 
             <Button
               type="submit"
-              disabled={isLoading || !auth}
+              disabled={loading}
               className="w-full h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium"
             >
-              {isLoading ? (
+              {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Creating account...
                 </>
               ) : (
-                "Sign up"
+                'Sign up'
               )}
             </Button>
           </form>
@@ -218,12 +236,8 @@ export default function SignUpPage() {
           <Button
             variant="outline"
             className="w-full h-12 border-orange-200 hover:bg-orange-50"
-            onClick={() => {
-              toast({
-                title: "Coming Soon",
-                description: "Google sign-up will be available soon!",
-              })
-            }}
+            onClick={handleGoogleSignUp}
+            disabled={loading}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
@@ -247,10 +261,10 @@ export default function SignUpPage() {
           </Button>
 
           <div className="text-center text-sm text-gray-600">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link href="/auth/signin" className="text-orange-600 hover:text-orange-700 font-medium">
               Sign In
-            </Link>{" "}
+            </Link>{' '}
             now
           </div>
         </CardContent>

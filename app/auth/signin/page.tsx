@@ -1,71 +1,71 @@
-"use client"
+'use client'
 
-import type React from "react"
-import { useState, useEffect, Suspense } from "react"
-import { useAuth } from "@/components/auth-provider"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, ChefHat } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { useSearchParams } from "next/navigation"
-import Link from "next/link"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useState } from 'react'
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { auth } from '@/lib/firebase'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Eye, EyeOff, ChefHat } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
-function SignInForm() {
-  const [mounted, setMounted] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+export default function SignInPage() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
-  const auth = useAuth()
+  const router = useRouter()
   const { toast } = useToast()
-  const searchParams = useSearchParams()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!auth) return
-
-    setIsLoading(true)
+    setLoading(true)
 
     try {
-      const success = await auth.login(email, password)
-      if (success) {
-        toast({
-          title: "Welcome back! 👋",
-          description: "You have successfully signed in.",
-        })
-      } else {
-        toast({
-          title: "Sign in failed",
-          description: "Invalid email or password. Please try again.",
-          variant: "destructive",
-        })
-      }
-    } catch (error) {
+      await signInWithEmailAndPassword(auth, email, password)
       toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
+        title: 'Welcome back!',
+        description: 'You have successfully signed in.',
+      })
+      router.push('/')
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
       })
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
-  if (!mounted) {
-    return null // Prevent SSR issues
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
+
+    try {
+      const provider = new GoogleAuthProvider()
+      await signInWithPopup(auth, provider)
+      toast({
+        title: 'Welcome back!',
+        description: 'You have successfully signed in with Google.',
+      })
+      router.push('/')
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100 flex items-center justify-center p-4">
-      {/* Background Food Images */}
       <div className="absolute inset-0 overflow-hidden opacity-10">
         <div className="absolute top-10 left-10 w-32 h-32 bg-orange-200 rounded-full"></div>
         <div className="absolute top-32 right-20 w-24 h-24 bg-orange-300 rounded-full"></div>
@@ -89,13 +89,7 @@ function SignInForm() {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {searchParams.get("message") && (
-            <Alert className="border-green-200 bg-green-50 text-green-800">
-              <AlertDescription>{searchParams.get("message")}</AlertDescription>
-            </Alert>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleEmailSignIn} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-700">
                 Email
@@ -118,7 +112,7 @@ function SignInForm() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -145,16 +139,16 @@ function SignInForm() {
 
             <Button
               type="submit"
-              disabled={isLoading || !auth}
+              disabled={loading}
               className="w-full h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium"
             >
-              {isLoading ? (
+              {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Signing in...
                 </>
               ) : (
-                "Sign in"
+                'Sign in'
               )}
             </Button>
           </form>
@@ -171,12 +165,8 @@ function SignInForm() {
           <Button
             variant="outline"
             className="w-full h-12 border-orange-200 hover:bg-orange-50"
-            onClick={() => {
-              toast({
-                title: "Coming Soon",
-                description: "Google sign-in will be available soon!",
-              })
-            }}
+            onClick={handleGoogleSignIn}
+            disabled={loading}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
@@ -200,28 +190,14 @@ function SignInForm() {
           </Button>
 
           <div className="text-center text-sm text-gray-600">
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <Link href="/auth/signup" className="text-orange-600 hover:text-orange-700 font-medium">
               Sign Up
-            </Link>{" "}
+            </Link>{' '}
             now
           </div>
         </CardContent>
       </Card>
     </div>
-  )
-}
-
-export default function SignInPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
-        </div>
-      }
-    >
-      <SignInForm />
-    </Suspense>
   )
 }

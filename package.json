@@ -24,6 +24,7 @@
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "firebase": "12.9.0",
     "gcp-metadata": "latest",
     "jsonwebtoken": "^9.0.2",
     "kerberos": "latest",
