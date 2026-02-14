@@ -1,9 +1,11 @@
 "use client"
 
-import { Home, ChefHat, Sparkles, Heart, User, LogOut } from "lucide-react"
+import { Home, ChefHat, Sparkles, Heart, BookOpen, User, LogOut } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useAuth } from "@/components/auth-provider"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 import {
   Sidebar,
   SidebarContent,
@@ -17,6 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/hooks/use-toast"
 
 const menuItems = [
   {
@@ -28,6 +31,11 @@ const menuItems = [
     title: "Recipes",
     url: "/recipes",
     icon: ChefHat,
+  },
+  {
+    title: "Food Blogs",
+    url: "/blogs",
+    icon: BookOpen,
   },
   {
     title: "Generator",
@@ -42,7 +50,7 @@ const menuItems = [
   {
     title: "Favorites",
     url: "/favorites",
-    icon: User,
+    icon: Heart,
   },
   {
     title: "Profile",
@@ -53,17 +61,38 @@ const menuItems = [
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const { user, logout } = useAuth()
+  const { user } = useFirebaseAuth()
   const router = useRouter()
+  const { toast } = useToast()
 
   const handleLogoClick = () => {
     router.push("/")
+  }
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth)
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      })
+      router.push("/auth/signin")
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   // Don't render sidebar if user is not authenticated or on auth pages
   if (!user || pathname.startsWith("/auth")) {
     return null
   }
+
+  const userDisplayName = user.displayName || user.email || "User"
+  const userInitial = userDisplayName.charAt(0).toUpperCase()
 
   return (
     <Sidebar className="border-r border-orange-200/50 bg-white/95 backdrop-blur-sm">
@@ -112,19 +141,19 @@ export function AppSidebar() {
       <SidebarFooter className="p-2 lg:p-4 border-t border-orange-200/50">
         <div className="flex items-center gap-2 lg:gap-3 p-2 lg:p-3 rounded-xl bg-orange-50/50">
           <Avatar className="w-8 h-8 lg:w-10 lg:h-10 border-2 border-orange-200 flex-shrink-0">
-            <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.username} />
+            <AvatarImage src={user.photoURL || "/placeholder.svg"} alt={userDisplayName} />
             <AvatarFallback className="bg-orange-100 text-orange-700 text-xs lg:text-sm">
-              {user.username.charAt(0).toUpperCase()}
+              {userInitial}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0 hidden lg:block">
-            <p className="text-sm font-medium text-gray-900 truncate">{user.username}</p>
+            <p className="text-sm font-medium text-gray-900 truncate">{userDisplayName}</p>
             <p className="text-xs text-gray-600 truncate">{user.email}</p>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            onClick={logout}
+            onClick={handleLogout}
             className="w-6 h-6 lg:w-8 lg:h-8 text-gray-500 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
           >
             <LogOut className="w-3 h-3 lg:w-4 lg:h-4" />
