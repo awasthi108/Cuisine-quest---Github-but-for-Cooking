@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
-import { useAuth } from "@/components/auth-provider"
 import { useRouter } from "next/navigation"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
@@ -15,9 +14,10 @@ import { RecipeCard } from "@/components/recipe-card"
 import { LoadingQuotes } from "@/components/loading-quotes"
 import { searchMealByName, getRandomMeals, type Meal } from "@/lib/meal-api"
 import { useToast } from "@/hooks/use-toast"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
 
 export default function HomePage() {
-  const { user, loading } = useAuth()
+  const { user, loading } = useFirebaseAuth()
   const router = useRouter()
   const { toast } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
@@ -103,7 +103,7 @@ export default function HomePage() {
               <Menu className="w-5 h-5" />
             </SidebarTrigger>
             <div className="flex-1">
-              <h1 className="text-lg font-bold text-gray-900">Hello, {user.username}! 👋</h1>
+              <h1 className="text-lg font-bold text-gray-900">Hello, {user?.displayName || user?.email || 'Chef'}! 👋</h1>
               <p className="text-sm text-gray-600">What would you like to cook today?</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function HomePage() {
         {/* Desktop Header */}
         <header className="hidden lg:block sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-orange-200/50 p-6">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900">Hello, {user.username}! 👋</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Hello, {user?.displayName || user?.email || 'Chef'}! 👋</h1>
             <p className="text-gray-600">What would you like to cook today?</p>
           </div>
         </header>
