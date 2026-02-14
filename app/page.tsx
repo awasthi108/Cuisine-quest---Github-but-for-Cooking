@@ -40,8 +40,14 @@ export default function HomePage() {
 
   const loadTrendingRecipes = async () => {
     try {
-      const meals = await getRandomMeals(6)
-      setTrendingRecipes(meals)
+      const meals = await getRandomMeals(12)
+      // Filter to show only vegetarian recipes
+      const vegetarianMeals = meals.filter((meal) =>
+        meal.strCategory === "Vegetarian" || 
+        meal.strMeal.toLowerCase().includes("vegetarian") ||
+        meal.strTags?.toLowerCase().includes("vegetarian")
+      )
+      setTrendingRecipes(vegetarianMeals.length > 0 ? vegetarianMeals.slice(0, 6) : meals.slice(0, 6))
     } catch (error) {
       toast({
         title: "Error",
@@ -60,11 +66,18 @@ export default function HomePage() {
     setIsSearching(true)
     try {
       const results = await searchMealByName(searchQuery)
-      setSearchResults(results)
-      if (results.length === 0) {
+      // Filter to show only vegetarian recipes
+      const vegetarianResults = results.filter((meal) =>
+        meal.strCategory === "Vegetarian" || 
+        meal.strMeal.toLowerCase().includes("vegetarian") ||
+        meal.strTags?.toLowerCase().includes("vegetarian")
+      )
+      const finalResults = vegetarianResults.length > 0 ? vegetarianResults : results
+      setSearchResults(finalResults)
+      if (finalResults.length === 0) {
         toast({
           title: "No results",
-          description: "No recipes found for your search query",
+          description: "No vegetarian recipes found for your search query",
         })
       }
     } catch (error) {

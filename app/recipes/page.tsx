@@ -93,6 +93,13 @@ export default function RecipesPage() {
   const filterRecipes = () => {
     let filtered = recipes
 
+    // Always filter to show only vegetarian recipes
+    filtered = filtered.filter((recipe) =>
+      recipe.strCategory === "Vegetarian" || 
+      recipe.strMeal.toLowerCase().includes("vegetarian") ||
+      recipe.strTags?.toLowerCase().includes("vegetarian")
+    )
+
     // Filter by search query
     if (searchQuery.trim()) {
       filtered = filtered.filter(
