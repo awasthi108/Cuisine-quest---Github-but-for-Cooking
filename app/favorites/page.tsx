@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAuth } from "@/components/auth-provider"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,7 @@ interface FavoriteRecipe extends Meal {
 }
 
 export default function FavoritesPage() {
-  const { user } = useAuth()
+  const { user } = useFirebaseAuth()
   const { toast } = useToast()
   const [favorites, setFavorites] = useState<FavoriteRecipe[]>([])
   const [loading, setLoading] = useState(true)

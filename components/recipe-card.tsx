@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Heart, Clock, Users, Eye } from "lucide-react"
-import { useAuth } from "@/components/auth-provider"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import type { Meal } from "@/lib/meal-api"
 import Link from "next/link"
@@ -16,7 +16,7 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
-  const { user } = useAuth()
+  const { user } = useFirebaseAuth()
   const { toast } = useToast()
   const [isFavorited, setIsFavorited] = useState(false)
   const [isLoading, setIsLoading] = useState(false)

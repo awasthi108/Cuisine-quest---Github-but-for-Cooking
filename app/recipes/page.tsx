@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useEffect, useState } from "react"
-import { useAuth } from "@/components/auth-provider"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -47,7 +47,7 @@ const areas = [
 ]
 
 export default function RecipesPage() {
-  const { user } = useAuth()
+  const { user } = useFirebaseAuth()
   const { toast } = useToast()
   const [recipes, setRecipes] = useState<Meal[]>([])
   const [filteredRecipes, setFilteredRecipes] = useState<Meal[]>([])

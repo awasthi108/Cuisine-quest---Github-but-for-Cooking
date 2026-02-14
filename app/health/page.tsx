@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useAuth } from "@/components/auth-provider"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -54,7 +54,7 @@ const nutritionGoals = [
 ]
 
 export default function HealthPage() {
-  const { user } = useAuth()
+  const { user } = useFirebaseAuth()
   const { toast } = useToast()
   const [gender, setGender] = useState("male")
   const [currentWeight, setCurrentWeight] = useState("")
