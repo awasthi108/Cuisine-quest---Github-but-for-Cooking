@@ -26,21 +26,48 @@ export default function CreateBlogPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user) return
+    
+    if (!user) {
+      toast({
+        title: 'Error',
+        description: 'You must be logged in to create a blog',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (!formData.title || !formData.description || !formData.recipe) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
+      })
+      return
+    }
 
     setLoading(true)
     try {
+      console.log('[v0] Submitting blog creation:', { ...formData, userId: user.uid })
+      
       const response = await fetch('/api/food-blogs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.uid,
-          authorName: user.displayName || 'Anonymous',
-          ...formData,
+          authorName: user.displayName || 'Anonymous Chef',
+          title: formData.title,
+          description: formData.description,
+          recipe: formData.recipe,
+          imageUrl: formData.imageUrl,
         }),
       })
 
-      if (!response.ok) throw new Error('Failed to create blog')
+      const data = await response.json()
+      console.log('[v0] API Response:', data)
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create blog')
+      }
 
       toast({
         title: 'Success',
@@ -49,9 +76,10 @@ export default function CreateBlogPage() {
 
       router.push('/blogs')
     } catch (error: any) {
+      console.error('[v0] Blog creation error:', error)
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to create blog. Please try again.',
         variant: 'destructive',
       })
     } finally {
