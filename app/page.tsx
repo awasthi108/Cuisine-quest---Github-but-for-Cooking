@@ -40,21 +40,18 @@ export default function HomePage() {
 
   const loadTrendingRecipes = async () => {
     try {
-      const meals = await getRandomMeals(12)
-      // Filter to show only vegetarian recipes
+      // Load only 6 recipes instead of 12, then filter
+      const meals = await getRandomMeals(8)
       const vegetarianMeals = meals.filter((meal) =>
         meal.strCategory === "Vegetarian" || 
         meal.strMeal.toLowerCase().includes("vegetarian") ||
         meal.strTags?.toLowerCase().includes("vegetarian")
       )
-      setTrendingRecipes(vegetarianMeals.length > 0 ? vegetarianMeals.slice(0, 6) : meals.slice(0, 6))
+      const finalMeals = vegetarianMeals.length > 0 ? vegetarianMeals.slice(0, 6) : meals.slice(0, 6)
+      setTrendingRecipes(finalMeals)
+      setLoadingTrending(false)
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load trending recipes",
-        variant: "destructive",
-      })
-    } finally {
+      console.error("Error loading trending recipes:", error)
       setLoadingTrending(false)
     }
   }

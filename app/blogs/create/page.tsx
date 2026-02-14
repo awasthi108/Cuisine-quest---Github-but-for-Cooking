@@ -104,12 +104,12 @@ export default function CreateBlogPage() {
               onChange={handleChange}
               placeholder="My Amazing Recipe..."
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Description
             </label>
             <textarea
@@ -119,12 +119,12 @@ export default function CreateBlogPage() {
               placeholder="Tell us about your recipe..."
               rows={4}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Recipe Details
             </label>
             <textarea
@@ -134,7 +134,7 @@ export default function CreateBlogPage() {
               placeholder="Ingredients and instructions..."
               rows={8}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
             />
           </div>
 
@@ -160,13 +160,13 @@ export default function CreateBlogPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
-            >
-              {loading ? 'Publishing...' : 'Publish Blog'}
-            </Button>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition"
+          >
+            {loading ? 'Creating...' : 'Create Blog Post'}
+          </Button>
             <Button
               type="button"
               variant="outline"

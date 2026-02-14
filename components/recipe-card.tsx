@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
+import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -74,7 +75,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         if (response.ok) {
           setIsFavorited(true)
           toast({
-            title: "Added to favorites! ❤️",
+            title: "Added to favorites",
             description: "Recipe has been saved to your favorites",
           })
         }
