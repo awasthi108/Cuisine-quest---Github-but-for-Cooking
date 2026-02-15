@@ -33,6 +33,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(blogs)
   } catch (error: any) {
     console.error('[v0] Food blogs fetch error:', error)
+    
+    // Check if it's a permission error
+    if (error.code === 'permission-denied') {
+      return NextResponse.json(
+        { 
+          error: 'Firestore rules not deployed. Please see FIRESTORE_SETUP.md for instructions.',
+          code: 'permission-denied'
+        },
+        { status: 403 }
+      )
+    }
+    
     return NextResponse.json(
       { error: error.message || 'Failed to fetch food blogs' },
       { status: 500 }
@@ -91,6 +103,18 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error('[v0] Food blog creation error:', error)
     console.error('[v0] Error stack:', error.stack)
+    
+    // Check if it's a permission error
+    if (error.code === 'permission-denied') {
+      return NextResponse.json(
+        { 
+          error: 'Firestore rules not deployed. Please see FIRESTORE_SETUP.md for instructions.',
+          code: 'permission-denied'
+        },
+        { status: 403 }
+      )
+    }
+    
     return NextResponse.json(
       { error: error.message || 'Failed to create food blog' },
       { status: 500 }

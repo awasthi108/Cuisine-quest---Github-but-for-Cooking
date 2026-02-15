@@ -77,9 +77,17 @@ export default function CreateBlogPage() {
       router.push('/blogs')
     } catch (error: any) {
       console.error('[v0] Blog creation error:', error)
+      
+      let errorMessage = error.message || 'Failed to create blog. Please try again.'
+      
+      // Check if it's a permission error and provide helpful guidance
+      if (error.message?.includes('permission') || error.message?.includes('FIRESTORE_SETUP')) {
+        errorMessage = 'Firestore rules need to be deployed. See FIRESTORE_SETUP.md for instructions.'
+      }
+      
       toast({
         title: 'Error',
-        description: error.message || 'Failed to create blog. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       })
     } finally {

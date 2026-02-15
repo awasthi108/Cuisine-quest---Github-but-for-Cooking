@@ -103,6 +103,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ followingIds })
   } catch (error: any) {
     console.error('[v0] Get follows error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    
+    // Check if it's a permission error
+    if (error.code === 'permission-denied') {
+      return NextResponse.json(
+        { 
+          error: 'Firestore rules not deployed. Please see FIRESTORE_SETUP.md for instructions.',
+          code: 'permission-denied'
+        },
+        { status: 403 }
+      )
+    }
+    
+    return NextResponse.json({ error: error.message || 'Failed to fetch follows' }, { status: 500 })
   }
 }
