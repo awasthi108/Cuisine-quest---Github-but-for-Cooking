@@ -81,7 +81,7 @@ export function ChefCarousel() {
     }))
 
     toast({
-      title: isCurrentlyFollowing ? "Unfollowed! 👋" : "Following! 🎉",
+      title: isCurrentlyFollowing ? "Unfollowed" : "Following",
       description: isCurrentlyFollowing ? `You unfollowed ${chefName}` : `You are now following ${chefName}`,
     })
   }
@@ -111,10 +111,10 @@ export function ChefCarousel() {
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full bg-white/90 backdrop-blur-sm border-orange-200 hover:bg-orange-50 shadow-md"
+          className="rounded-full bg-white/90 backdrop-blur-sm border-slate-200 hover:bg-slate-50 shadow-md"
           onClick={scrollLeft}
         >
-          <ChevronLeft className="h-5 w-5 text-orange-700" />
+          <ChevronLeft className="h-5 w-5 text-slate-700" />
         </Button>
       </div>
 
@@ -122,10 +122,10 @@ export function ChefCarousel() {
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full bg-white/90 backdrop-blur-sm border-orange-200 hover:bg-orange-50 shadow-md"
+          className="rounded-full bg-white/90 backdrop-blur-sm border-slate-200 hover:bg-slate-50 shadow-md"
           onClick={scrollRight}
         >
-          <ChevronRight className="h-5 w-5 text-orange-700" />
+          <ChevronRight className="h-5 w-5 text-slate-700" />
         </Button>
       </div>
 
@@ -138,12 +138,12 @@ export function ChefCarousel() {
         {chefs.map((chef) => (
           <Card
             key={chef.id}
-            className="min-w-[200px] bg-white/90 backdrop-blur-sm border-orange-200 rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+            className="min-w-[200px] bg-white border-slate-200 rounded-lg hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
           >
             <CardContent className="p-4 text-center space-y-3">
-              <Avatar className="w-16 h-16 mx-auto border-2 border-orange-200">
+              <Avatar className="w-16 h-16 mx-auto border-2 border-slate-200">
                 <AvatarImage src={chef.image || "/placeholder.svg"} alt={chef.name} />
-                <AvatarFallback className="bg-orange-100 text-orange-700">
+                <AvatarFallback className="bg-slate-100 text-slate-700">
                   {chef.name
                     .split(" ")
                     .map((n) => n[0])
@@ -152,16 +152,16 @@ export function ChefCarousel() {
               </Avatar>
 
               <div>
-                <h3 className="font-semibold text-orange-800 text-sm">{chef.name}</h3>
-                <p className="text-xs text-orange-600">{chef.specialty}</p>
+                <h3 className="font-semibold text-slate-900 text-sm">{chef.name}</h3>
+                <p className="text-xs text-slate-600">{chef.specialty}</p>
               </div>
 
               <div className="flex items-center justify-center gap-1">
                 <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                <span className="text-xs text-orange-700">{chef.rating}</span>
+                <span className="text-xs text-slate-700">{chef.rating}</span>
               </div>
 
-              <p className="text-xs text-gray-500">{chef.followers} followers</p>
+              <p className="text-xs text-slate-500">{chef.followers} followers</p>
 
               <Button
                 size="sm"
@@ -169,8 +169,8 @@ export function ChefCarousel() {
                 onClick={() => handleFollow(chef.id, chef.name)}
                 className={`w-full text-xs ${
                   followStatus[chef.id]
-                    ? "bg-orange-500 hover:bg-orange-600 text-white"
-                    : "border-orange-200 hover:bg-orange-50 text-orange-700"
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                    : "border-slate-200 hover:bg-slate-50 text-slate-700"
                 }`}
               >
                 {followStatus[chef.id] ? (

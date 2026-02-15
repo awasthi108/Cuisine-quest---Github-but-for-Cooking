@@ -40,7 +40,7 @@ export default function ProfilePage() {
       if (response.ok) {
         setIsEditing(false)
         toast({
-          title: "Profile updated! ✅",
+          title: "Profile updated",
           description: "Your profile has been successfully updated.",
         })
       } else {
