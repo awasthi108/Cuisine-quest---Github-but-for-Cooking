@@ -94,34 +94,34 @@ export default function HealthPage() {
 
   return (
     <SidebarInset>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-green-100">
+      <div className="min-h-screen bg-slate-50">
         {/* Mobile Header */}
-        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-green-200/50 p-4 lg:hidden">
+        <header className="sticky top-0 z-40 bg-white border-b border-slate-200 p-4 lg:hidden">
           <div className="flex items-center gap-4">
             <SidebarTrigger className="p-2">
               <Menu className="w-5 h-5" />
             </SidebarTrigger>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center">
                 <Heart className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Health Mode</h1>
-                <p className="text-sm text-gray-600">Personalized nutrition</p>
+                <h1 className="text-lg font-bold text-slate-900">Health Mode</h1>
+                <p className="text-sm text-slate-600">Personalized nutrition</p>
               </div>
             </div>
           </div>
         </header>
 
         {/* Desktop Header */}
-        <header className="hidden lg:block sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-green-200/50 p-6">
+        <header className="hidden lg:block sticky top-0 z-40 bg-white border-b border-slate-200 p-6">
           <div className="max-w-7xl mx-auto flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center">
               <Heart className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Healthy Recipe Generator</h1>
-              <p className="text-gray-600">Personalized nutrition for your health goals</p>
+              <h1 className="text-3xl font-bold text-slate-900">Healthy Recipe Generator</h1>
+              <p className="text-slate-600">Personalized nutrition for your health goals</p>
             </div>
           </div>
         </header>
@@ -129,16 +129,16 @@ export default function HealthPage() {
         <div className="p-4 lg:p-6 max-w-7xl mx-auto space-y-6 lg:space-y-8">
 
           {/* Simple Health Form */}
-          <Card className="border-green-200/50 bg-white/95 backdrop-blur-sm">
+          <Card className="border-slate-200 bg-white">
             <CardHeader>
-              <CardTitle className="text-green-800 flex items-center gap-2">
+              <CardTitle className="text-slate-900 flex items-center gap-2">
                 <Heart className="w-5 h-5" />
                 Healthy Recipe Suggestion
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="preferences" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="preferences" className="text-sm font-medium text-slate-700">
                   What you're in the mood for (optional)
                 </Label>
                 <Textarea
@@ -146,12 +146,12 @@ export default function HealthPage() {
                   placeholder="e.g., something light, quick to make, high protein..."
                   value={preferences}
                   onChange={(e) => setPreferences(e.target.value)}
-                  className="min-h-[60px] border-green-200 focus:border-green-400 focus:ring-green-400"
+                  className="min-h-[60px] border-slate-200 focus:border-emerald-500 focus:ring-emerald-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Meal Type</Label>
+                <Label className="text-sm font-medium text-slate-700">Meal Type</Label>
                 <div className="flex flex-wrap gap-2">
                   {["Breakfast", "Lunch", "Dinner", "Snack"].map((category) => (
                     <Button
@@ -161,8 +161,8 @@ export default function HealthPage() {
                       onClick={() => setSelectedCategory(category)}
                       className={
                         selectedCategory === category
-                          ? "bg-green-500 hover:bg-green-600"
-                          : "border-green-200 hover:bg-green-50"
+                          ? "bg-emerald-600 hover:bg-emerald-700"
+                          : "border-slate-200 hover:bg-slate-50"
                       }
                     >
                       {category}
@@ -174,7 +174,7 @@ export default function HealthPage() {
               <Button
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="w-full h-11 bg-green-500 hover:bg-green-600 text-white font-medium"
+                className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
               >
                 {isGenerating ? (
                   <>

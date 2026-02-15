@@ -172,13 +172,13 @@ export default function HomePage() {
 
           {/* Food Categories */}
           <div>
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">Popular Categories</h2>
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-4">Popular Categories</h2>
             <div className="flex flex-wrap gap-2 lg:gap-3">
               {["Chicken", "Beef", "Seafood", "Vegetarian", "Dessert", "Pasta", "Soup", "Salad"].map((category) => (
                 <Badge
                   key={category}
                   variant="secondary"
-                  className="px-3 lg:px-4 py-1 lg:py-2 text-xs lg:text-sm bg-orange-100 text-orange-700 hover:bg-orange-200 cursor-pointer transition-colors"
+                  className="px-3 lg:px-4 py-1 lg:py-2 text-xs lg:text-sm bg-slate-200 text-slate-700 hover:bg-slate-300 cursor-pointer transition-colors"
                   onClick={() => {
                     setSearchQuery(category)
                     handleSearch({ preventDefault: () => {} } as React.FormEvent)
@@ -193,7 +193,7 @@ export default function HomePage() {
           {/* Recipes Section */}
           <div>
             <div className="flex items-center justify-between mb-4 lg:mb-6">
-              <h2 className="text-xl lg:text-2xl font-bold text-gray-900">
+              <h2 className="text-xl lg:text-2xl font-bold text-slate-900">
                 {searchResults.length > 0 ? "Search Results" : "Trending Recipes"}
               </h2>
               {searchResults.length === 0 && (
@@ -201,7 +201,7 @@ export default function HomePage() {
                   variant="outline"
                   onClick={loadTrendingRecipes}
                   disabled={loadingTrending}
-                  className="border-orange-200 hover:bg-orange-50 text-sm lg:text-base"
+                  className="border-slate-200 hover:bg-slate-50 text-sm lg:text-base"
                 >
                   Refresh
                 </Button>
@@ -219,13 +219,13 @@ export default function HomePage() {
             )}
 
             {displayRecipes.length === 0 && !loadingTrending && (
-              <Card className="border-orange-200/50 bg-white/95 backdrop-blur-sm">
+              <Card className="border-slate-200 bg-white">
                 <CardContent className="p-8 lg:p-12 text-center">
-                  <div className="text-gray-400 mb-4">
+                  <div className="text-slate-400 mb-4">
                     <Search className="w-12 h-12 lg:w-16 lg:h-16 mx-auto" />
                   </div>
-                  <h3 className="text-lg lg:text-xl font-semibold text-gray-900 mb-2">No recipes found</h3>
-                  <p className="text-gray-600 text-sm lg:text-base">
+                  <h3 className="text-lg lg:text-xl font-semibold text-slate-900 mb-2">No recipes found</h3>
+                  <p className="text-slate-600 text-sm lg:text-base">
                     Try searching for something else or check out our trending recipes.
                   </p>
                 </CardContent>
@@ -235,19 +235,19 @@ export default function HomePage() {
 
           {/* Learn More Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-            <Card className="border-orange-200/50 bg-gradient-to-br from-green-50 to-green-100">
+            <Card className="border-slate-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-green-800 flex items-center gap-2 text-lg lg:text-xl">
+                <CardTitle className="text-slate-900 flex items-center gap-2 text-lg lg:text-xl">
                   <Heart className="w-4 h-4 lg:w-5 lg:h-5" />
                   Healthful Meal Program
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-green-700 mb-4 text-sm lg:text-base">
+                <p className="text-slate-600 mb-4 text-sm lg:text-base">
                   Discover nutritious recipes tailored to your health goals and dietary preferences.
                 </p>
                 <Button
-                  className="bg-green-600 hover:bg-green-700 text-sm lg:text-base"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-sm lg:text-base"
                   onClick={() => router.push("/health")}
                 >
                   Learn More
@@ -255,19 +255,19 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-orange-200/50 bg-gradient-to-br from-purple-50 to-purple-100">
+            <Card className="border-slate-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-purple-800 flex items-center gap-2 text-lg lg:text-xl">
+                <CardTitle className="text-slate-900 flex items-center gap-2 text-lg lg:text-xl">
                   <Users className="w-4 h-4 lg:w-5 lg:h-5" />
-                  Michelin-level Cuisine
+                  Recipe Generator
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-purple-700 mb-4 text-sm lg:text-base">
-                  Master professional cooking techniques with our premium recipe collection.
+                <p className="text-slate-600 mb-4 text-sm lg:text-base">
+                  Generate personalized recipes using AI based on your preferences and ingredients.
                 </p>
                 <Button
-                  className="bg-purple-600 hover:bg-purple-700 text-sm lg:text-base"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-sm lg:text-base"
                   onClick={() => router.push("/generator")}
                 >
                   Explore Now
