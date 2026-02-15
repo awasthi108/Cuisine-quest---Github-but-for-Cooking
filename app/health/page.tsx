@@ -191,7 +191,7 @@ export default function HealthPage() {
           {/* Recipe Suggestion */}
           {showRecipeAfterGenerate && randomRecipe && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Suggestion</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Suggestion</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <RecipeCard recipe={randomRecipe} />
               </div>
@@ -201,7 +201,7 @@ export default function HealthPage() {
           {/* Default Healthy Recipes */}
           {!showRecipeAfterGenerate && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Healthy Recipes</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Healthy Recipes</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 {healthyRecipes.map((recipe) => (
                   <RecipeCard key={recipe.idMeal} recipe={recipe} />
