@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, ChefHat, Menu } from "lucide-react"
 import { RecipeCard } from "@/components/recipe-card"
 import { searchMealByName, getMealsByFirstLetter, type Meal } from "@/lib/meal-api"
@@ -232,32 +231,30 @@ export default function RecipesPage() {
               {/* Filters */}
               <div className="flex flex-col sm:flex-row gap-3 lg:gap-4">
                 <div className="flex-1">
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger className="h-10 lg:h-12 border-orange-200 focus:border-orange-400 focus:ring-orange-400">
-                      <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="w-full h-10 lg:h-12 px-3 border border-orange-200 rounded-md focus:border-orange-400 focus:ring-2 focus:ring-orange-400"
+                  >
+                    {categories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="flex-1">
-                  <Select value={selectedArea} onValueChange={setSelectedArea}>
-                    <SelectTrigger className="h-10 lg:h-12 border-orange-200 focus:border-orange-400 focus:ring-orange-400">
-                      <SelectValue placeholder="Cuisine" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {areas.map((area) => (
-                        <SelectItem key={area} value={area}>
-                          {area}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <select
+                    value={selectedArea}
+                    onChange={(e) => setSelectedArea(e.target.value)}
+                    className="w-full h-10 lg:h-12 px-3 border border-orange-200 rounded-md focus:border-orange-400 focus:ring-2 focus:ring-orange-400"
+                  >
+                    {areas.map((area) => (
+                      <option key={area} value={area}>
+                        {area}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

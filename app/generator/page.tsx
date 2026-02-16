@@ -6,8 +6,6 @@ import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, ChefHat, Clock, Users } from "lucide-react"
@@ -112,10 +110,11 @@ export default function GeneratorPage() {
                   <Label className="text-sm font-medium text-gray-700">Apply Popular Chef Style?</Label>
                   <p className="text-xs text-gray-500 mt-1">Get recipes inspired by famous chefs</p>
                 </div>
-                <Switch
+                <input
+                  type="checkbox"
                   checked={chefStyle}
-                  onCheckedChange={setChefStyle}
-                  className="data-[state=checked]:bg-orange-500"
+                  onChange={(e) => setChefStyle(e.target.checked)}
+                  className="w-6 h-6"
                 />
               </div>
 
@@ -124,21 +123,21 @@ export default function GeneratorPage() {
                 {/* Country */}
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-gray-700">Country</Label>
-                  <Select value={country} onValueChange={setCountry}>
-                    <SelectTrigger className="border-orange-200 focus:border-orange-400 focus:ring-orange-400">
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="italy">Italy</SelectItem>
-                      <SelectItem value="france">France</SelectItem>
-                      <SelectItem value="india">India</SelectItem>
-                      <SelectItem value="china">China</SelectItem>
-                      <SelectItem value="japan">Japan</SelectItem>
-                      <SelectItem value="mexico">Mexico</SelectItem>
-                      <SelectItem value="thailand">Thailand</SelectItem>
-                      <SelectItem value="usa">United States</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <select
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="w-full h-10 px-3 border border-orange-200 rounded-md focus:border-orange-400 focus:ring-2 focus:ring-orange-400"
+                  >
+                    <option value="">Select country</option>
+                    <option value="italy">Italy</option>
+                    <option value="france">France</option>
+                    <option value="india">India</option>
+                    <option value="china">China</option>
+                    <option value="japan">Japan</option>
+                    <option value="mexico">Mexico</option>
+                    <option value="thailand">Thailand</option>
+                    <option value="usa">United States</option>
+                  </select>
                 </div>
 
                 {/* Dish Category */}
@@ -214,10 +213,11 @@ export default function GeneratorPage() {
                   <Label className="text-sm font-medium text-gray-700">Michelin Recipe</Label>
                   <p className="text-xs text-gray-500 mt-1">Generate restaurant-quality recipes</p>
                 </div>
-                <Switch
+                <input
+                  type="checkbox"
                   checked={michelinRecipe}
-                  onCheckedChange={setMichelinRecipe}
-                  className="data-[state=checked]:bg-purple-500"
+                  onChange={(e) => setMichelinRecipe(e.target.checked)}
+                  className="w-6 h-6"
                 />
               </div>
 
