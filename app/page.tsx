@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
-import { useAuth } from "@/components/auth-provider"
 import { useRouter } from "next/navigation"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
@@ -15,9 +14,10 @@ import { RecipeCard } from "@/components/recipe-card"
 import { LoadingQuotes } from "@/components/loading-quotes"
 import { searchMealByName, getRandomMeals, type Meal } from "@/lib/meal-api"
 import { useToast } from "@/hooks/use-toast"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
 
 export default function HomePage() {
-  const { user, loading } = useAuth()
+  const { user, loading } = useFirebaseAuth()
   const router = useRouter()
   const { toast } = useToast()
   const [searchQuery, setSearchQuery] = useState("")
@@ -40,15 +40,12 @@ export default function HomePage() {
 
   const loadTrendingRecipes = async () => {
     try {
-      const meals = await getRandomMeals(6)
-      setTrendingRecipes(meals)
+      const meals = await getRandomMeals(12)
+      const filteredMeals = meals.filter(meal => meal && meal.idMeal)
+      setTrendingRecipes(filteredMeals.slice(0, 6))
+      setLoadingTrending(false)
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load trending recipes",
-        variant: "destructive",
-      })
-    } finally {
+      console.error("Error loading trending recipes:", error)
       setLoadingTrending(false)
     }
   }
@@ -95,56 +92,56 @@ export default function HomePage() {
 
   return (
     <SidebarInset>
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-peach-50 to-orange-100">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
         {/* Mobile Header */}
-        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-orange-200/50 p-4 lg:hidden">
+        <header className="sticky top-0 z-40 bg-white border-b border-slate-200 p-4 lg:hidden">
           <div className="flex items-center gap-4">
             <SidebarTrigger className="p-2">
               <Menu className="w-5 h-5" />
             </SidebarTrigger>
             <div className="flex-1">
-              <h1 className="text-lg font-bold text-gray-900">Hello, {user.username}! 👋</h1>
-              <p className="text-sm text-gray-600">What would you like to cook today?</p>
+              <h1 className="text-lg font-bold text-slate-900">Hello, {user?.displayName || user?.email || 'Chef'}</h1>
+              <p className="text-sm text-slate-600">What would you like to cook today?</p>
             </div>
           </div>
         </header>
 
         {/* Desktop Header */}
-        <header className="hidden lg:block sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-orange-200/50 p-6">
+        <header className="hidden lg:block sticky top-0 z-40 bg-white border-b border-slate-200 p-6">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900">Hello, {user.username}! 👋</h1>
-            <p className="text-gray-600">What would you like to cook today?</p>
+            <h1 className="text-3xl font-bold text-slate-900">Hello, {user?.displayName || user?.email || 'Chef'}</h1>
+            <p className="text-slate-600">What would you like to cook today?</p>
           </div>
         </header>
 
         <div className="p-4 lg:p-6 max-w-7xl mx-auto space-y-6 lg:space-y-8">
           {/* Search Bar */}
-          <Card className="border-orange-200/50 bg-white/95 backdrop-blur-sm">
+          <Card className="border-slate-200 bg-white shadow-sm">
             <CardContent className="p-4 lg:p-6">
               <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 lg:gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 lg:w-5 lg:h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 lg:w-5 lg:h-5" />
                   <Input
                     placeholder="Search for recipes..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 lg:pl-12 h-10 lg:h-12 border-orange-200 focus:border-orange-400 focus:ring-orange-400"
+                    className="pl-10 lg:pl-12 h-10 lg:h-12 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500"
                   />
                 </div>
                 <div className="flex gap-2 lg:gap-4">
                   <Button
                     type="submit"
                     disabled={isSearching}
-                    className="flex-1 sm:flex-none h-10 lg:h-12 px-4 lg:px-6 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+                    className="h-10 lg:h-12 bg-emerald-600 hover:bg-emerald-700 text-white px-4 lg:px-6"
                   >
                     {isSearching ? "Searching..." : "Search"}
                   </Button>
                   {searchResults.length > 0 && (
                     <Button
                       type="button"
-                      variant="outline"
                       onClick={clearSearch}
-                      className="h-10 lg:h-12 px-4 lg:px-6 border-orange-200 hover:bg-orange-50"
+                      variant="outline"
+                      className="h-10 lg:h-12 border-slate-200 hover:bg-slate-50"
                     >
                       Clear
                     </Button>
@@ -156,19 +153,19 @@ export default function HomePage() {
 
           {/* Top Chefs Carousel */}
           <div>
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">Top Chefs</h2>
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-4">Top Chefs</h2>
             <ChefCarousel />
           </div>
 
           {/* Food Categories */}
           <div>
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">Popular Categories</h2>
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-4">Popular Categories</h2>
             <div className="flex flex-wrap gap-2 lg:gap-3">
               {["Chicken", "Beef", "Seafood", "Vegetarian", "Dessert", "Pasta", "Soup", "Salad"].map((category) => (
                 <Badge
                   key={category}
                   variant="secondary"
-                  className="px-3 lg:px-4 py-1 lg:py-2 text-xs lg:text-sm bg-orange-100 text-orange-700 hover:bg-orange-200 cursor-pointer transition-colors"
+                  className="px-3 lg:px-4 py-1 lg:py-2 text-xs lg:text-sm bg-slate-200 text-slate-700 hover:bg-slate-300 cursor-pointer transition-colors"
                   onClick={() => {
                     setSearchQuery(category)
                     handleSearch({ preventDefault: () => {} } as React.FormEvent)
@@ -183,7 +180,7 @@ export default function HomePage() {
           {/* Recipes Section */}
           <div>
             <div className="flex items-center justify-between mb-4 lg:mb-6">
-              <h2 className="text-xl lg:text-2xl font-bold text-gray-900">
+              <h2 className="text-xl lg:text-2xl font-bold text-slate-900">
                 {searchResults.length > 0 ? "Search Results" : "Trending Recipes"}
               </h2>
               {searchResults.length === 0 && (
@@ -191,7 +188,7 @@ export default function HomePage() {
                   variant="outline"
                   onClick={loadTrendingRecipes}
                   disabled={loadingTrending}
-                  className="border-orange-200 hover:bg-orange-50 text-sm lg:text-base"
+                  className="border-slate-200 hover:bg-slate-50 text-sm lg:text-base"
                 >
                   Refresh
                 </Button>
@@ -209,13 +206,13 @@ export default function HomePage() {
             )}
 
             {displayRecipes.length === 0 && !loadingTrending && (
-              <Card className="border-orange-200/50 bg-white/95 backdrop-blur-sm">
+              <Card className="border-slate-200 bg-white">
                 <CardContent className="p-8 lg:p-12 text-center">
-                  <div className="text-gray-400 mb-4">
+                  <div className="text-slate-400 mb-4">
                     <Search className="w-12 h-12 lg:w-16 lg:h-16 mx-auto" />
                   </div>
-                  <h3 className="text-lg lg:text-xl font-semibold text-gray-900 mb-2">No recipes found</h3>
-                  <p className="text-gray-600 text-sm lg:text-base">
+                  <h3 className="text-lg lg:text-xl font-semibold text-slate-900 mb-2">No recipes found</h3>
+                  <p className="text-slate-600 text-sm lg:text-base">
                     Try searching for something else or check out our trending recipes.
                   </p>
                 </CardContent>
@@ -225,19 +222,19 @@ export default function HomePage() {
 
           {/* Learn More Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-            <Card className="border-orange-200/50 bg-gradient-to-br from-green-50 to-green-100">
+            <Card className="border-slate-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-green-800 flex items-center gap-2 text-lg lg:text-xl">
+                <CardTitle className="text-slate-900 flex items-center gap-2 text-lg lg:text-xl">
                   <Heart className="w-4 h-4 lg:w-5 lg:h-5" />
                   Healthful Meal Program
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-green-700 mb-4 text-sm lg:text-base">
+                <p className="text-slate-600 mb-4 text-sm lg:text-base">
                   Discover nutritious recipes tailored to your health goals and dietary preferences.
                 </p>
                 <Button
-                  className="bg-green-600 hover:bg-green-700 text-sm lg:text-base"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-sm lg:text-base"
                   onClick={() => router.push("/health")}
                 >
                   Learn More
@@ -245,19 +242,19 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-orange-200/50 bg-gradient-to-br from-purple-50 to-purple-100">
+            <Card className="border-slate-200 bg-white">
               <CardHeader>
-                <CardTitle className="text-purple-800 flex items-center gap-2 text-lg lg:text-xl">
+                <CardTitle className="text-slate-900 flex items-center gap-2 text-lg lg:text-xl">
                   <Users className="w-4 h-4 lg:w-5 lg:h-5" />
-                  Michelin-level Cuisine
+                  Recipe Generator
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-purple-700 mb-4 text-sm lg:text-base">
-                  Master professional cooking techniques with our premium recipe collection.
+                <p className="text-slate-600 mb-4 text-sm lg:text-base">
+                  Generate personalized recipes using AI based on your preferences and ingredients.
                 </p>
                 <Button
-                  className="bg-purple-600 hover:bg-purple-700 text-sm lg:text-base"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-sm lg:text-base"
                   onClick={() => router.push("/generator")}
                 >
                   Explore Now

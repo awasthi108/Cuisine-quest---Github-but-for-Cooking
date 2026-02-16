@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useAuth } from "@/components/auth-provider"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -16,7 +16,7 @@ import { getRandomMeals, type Meal } from "@/lib/meal-api"
 import { useToast } from "@/hooks/use-toast"
 
 export default function GeneratorPage() {
-  const { user } = useAuth()
+  const { user } = useFirebaseAuth()
   const { toast } = useToast()
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedRecipes, setGeneratedRecipes] = useState<Meal[]>([])

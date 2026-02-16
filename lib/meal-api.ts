@@ -58,9 +58,13 @@ const BASE_URL = "https://www.themealdb.com/api/json/v1/1"
 
 export async function searchMealByName(name: string): Promise<Meal[]> {
   try {
-    const response = await fetch(`${BASE_URL}/search.php?s=${encodeURIComponent(name)}`)
+    const response = await fetch(`${BASE_URL}/search.php?s=${encodeURIComponent(name)}`, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    })
     const data: MealResponse = await response.json()
-    return data.meals || []
+    const meals = data.meals || []
+    meals.forEach(meal => mealCache.set(meal.idMeal, meal))
+    return meals
   } catch (error) {
     console.error("Error searching meals:", error)
     return []
@@ -79,10 +83,21 @@ export async function getMealsByFirstLetter(letter: string): Promise<Meal[]> {
 }
 
 export async function getMealById(id: string): Promise<Meal | null> {
+  // Check cache first
+  if (mealCache.has(id)) {
+    return mealCache.get(id) || null
+  }
+
   try {
-    const response = await fetch(`${BASE_URL}/lookup.php?i=${id}`)
+    const response = await fetch(`${BASE_URL}/lookup.php?i=${id}`, {
+      next: { revalidate: 86400 } // Cache for 24 hours
+    })
     const data: MealResponse = await response.json()
-    return data.meals?.[0] || null
+    const meal = data.meals?.[0] || null
+    if (meal) {
+      mealCache.set(meal.idMeal, meal)
+    }
+    return meal
   } catch (error) {
     console.error("Error getting meal by ID:", error)
     return null
@@ -91,24 +106,40 @@ export async function getMealById(id: string): Promise<Meal | null> {
 
 export async function getRandomMeal(): Promise<Meal | null> {
   try {
-    const response = await fetch(`${BASE_URL}/random.php`)
+    const response = await fetch(`${BASE_URL}/random.php`, {
+      next: { revalidate: 300 } // Cache for 5 minutes
+    })
     const data: MealResponse = await response.json()
-    return data.meals?.[0] || null
+    const meal = data.meals?.[0] || null
+    if (meal) {
+      mealCache.set(meal.idMeal, meal)
+    }
+    return meal
   } catch (error) {
     console.error("Error getting random meal:", error)
     return null
   }
 }
 
+// Cache for meals to reduce API calls
+const mealCache = new Map<string, Meal>()
+
 export async function getRandomMeals(count = 4): Promise<Meal[]> {
   const meals: Meal[] = []
+  const promises: Promise<Meal | null>[] = []
 
+  // Use Promise.all for parallel requests instead of sequential
   for (let i = 0; i < count; i++) {
-    const meal = await getRandomMeal()
+    promises.push(getRandomMeal())
+  }
+
+  const results = await Promise.all(promises)
+  results.forEach(meal => {
     if (meal) {
       meals.push(meal)
+      mealCache.set(meal.idMeal, meal)
     }
-  }
+  })
 
   return meals
 }

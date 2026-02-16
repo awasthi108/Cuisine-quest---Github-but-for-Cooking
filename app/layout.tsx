@@ -5,14 +5,21 @@ import "./globals.css"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Toaster } from "@/components/ui/toaster"
-import { AuthProvider } from "@/components/auth-provider"
+import { FirebaseAuthProvider } from "@/components/firebase-auth-provider"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], display: "swap" })
 
 export const metadata: Metadata = {
   title: "Cuisine Quest - Collaborative Recipe Platform",
   description: "A collaborative recipe platform like GitHub but for cooking",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  themeColor: '#059669'
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 }
 
 export default function RootLayout({
@@ -23,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
+        <FirebaseAuthProvider>
           <SidebarProvider>
             <div className="flex min-h-screen w-full">
               <AppSidebar />
@@ -31,7 +38,7 @@ export default function RootLayout({
             </div>
             <Toaster />
           </SidebarProvider>
-        </AuthProvider>
+        </FirebaseAuthProvider>
       </body>
     </html>
   )

@@ -2,11 +2,12 @@
 
 import type React from "react"
 import { useState } from "react"
+import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Heart, Clock, Users, Eye } from "lucide-react"
-import { useAuth } from "@/components/auth-provider"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import type { Meal } from "@/lib/meal-api"
 import Link from "next/link"
@@ -16,7 +17,7 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
-  const { user } = useAuth()
+  const { user } = useFirebaseAuth()
   const { toast } = useToast()
   const [isFavorited, setIsFavorited] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -74,7 +75,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         if (response.ok) {
           setIsFavorited(true)
           toast({
-            title: "Added to favorites! ❤️",
+            title: "Added to favorites",
             description: "Recipe has been saved to your favorites",
           })
         }
@@ -91,25 +92,24 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
   }
 
   return (
-    <Card className="group overflow-hidden border-orange-200/50 bg-white/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <Card className="group overflow-hidden border-slate-200 bg-white hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
       <div className="relative">
         <img
           src={recipe.strMealThumb || "/placeholder.svg"}
           alt={recipe.strMeal}
           className="w-full h-40 lg:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
         {/* Favorite Button */}
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-2 right-2 w-7 h-7 lg:w-8 lg:h-8 bg-white/80 backdrop-blur-sm hover:bg-white/90"
+          className="absolute top-2 right-2 w-7 h-7 lg:w-8 lg:h-8 bg-white hover:bg-slate-50"
           onClick={toggleFavorite}
           disabled={isLoading}
         >
           <Heart
-            className={`w-3 h-3 lg:w-4 lg:h-4 transition-colors ${isFavorited ? "fill-red-500 text-red-500" : "text-gray-600"}`}
+            className={`w-3 h-3 lg:w-4 lg:h-4 transition-colors ${isFavorited ? "fill-red-500 text-red-500" : "text-slate-600"}`}
           />
         </Button>
 
@@ -118,24 +118,24 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-2 left-2 w-7 h-7 lg:w-8 lg:h-8 bg-white/80 backdrop-blur-sm hover:bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            className="absolute top-2 left-2 w-7 h-7 lg:w-8 lg:h-8 bg-white hover:bg-slate-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           >
-            <Eye className="w-3 h-3 lg:w-4 lg:h-4 text-gray-600" />
+            <Eye className="w-3 h-3 lg:w-4 lg:h-4 text-slate-600" />
           </Button>
         </Link>
       </div>
 
       <CardContent className="p-3 lg:p-4">
         <div className="space-y-2">
-          <h3 className="font-semibold text-sm lg:text-base text-gray-900 line-clamp-2 group-hover:text-orange-700 transition-colors">
+          <h3 className="font-semibold text-sm lg:text-base text-slate-900 line-clamp-2 group-hover:text-emerald-700 transition-colors">
             {recipe.strMeal}
           </h3>
 
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-orange-100 text-orange-700 text-xs">
+            <Badge variant="secondary" className="bg-slate-200 text-slate-700 text-xs">
               {recipe.strCategory}
             </Badge>
-            <Badge variant="outline" className="border-orange-200 text-orange-600 text-xs">
+            <Badge variant="outline" className="border-slate-200 text-slate-600 text-xs">
               {recipe.strArea}
             </Badge>
           </div>
@@ -146,7 +146,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
                 .split(",")
                 .slice(0, 2)
                 .map((tag, index) => (
-                  <Badge key={index} variant="outline" className="text-xs border-gray-200 text-gray-600">
+                  <Badge key={index} variant="outline" className="text-xs border-slate-200 text-slate-600">
                     {tag.trim()}
                   </Badge>
                 ))}
@@ -156,7 +156,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
       </CardContent>
 
       <CardFooter className="p-3 lg:p-4 pt-0 flex items-center justify-between">
-        <div className="flex items-center gap-3 lg:gap-4 text-xs lg:text-sm text-gray-500">
+        <div className="flex items-center gap-3 lg:gap-4 text-xs lg:text-sm text-slate-600">
           <div className="flex items-center gap-1">
             <Clock className="w-3 h-3 lg:w-4 lg:h-4" />
             <span>30 min</span>
@@ -170,7 +170,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         <Link href={`/recipes/${recipe.idMeal}`}>
           <Button
             size="sm"
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-xs lg:text-sm h-7 lg:h-8 px-2 lg:px-3"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs lg:text-sm h-7 lg:h-8 px-2 lg:px-3"
           >
             View Recipe
           </Button>

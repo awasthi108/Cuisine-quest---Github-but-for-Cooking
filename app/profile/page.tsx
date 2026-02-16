@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useAuth } from "@/components/auth-provider"
+import { useFirebaseAuth } from "@/components/firebase-auth-provider"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,10 +16,10 @@ import { User, Settings, Bell, Shield, HelpCircle, LogOut } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export default function ProfilePage() {
-  const { user, logout } = useAuth()
+  const { user } = useFirebaseAuth()
   const { toast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
-  const [username, setUsername] = useState(user?.username || "")
+  const [username, setUsername] = useState(user?.displayName || "")
   const [email, setEmail] = useState(user?.email || "")
   const [notifications, setNotifications] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
@@ -38,7 +40,7 @@ export default function ProfilePage() {
       if (response.ok) {
         setIsEditing(false)
         toast({
-          title: "Profile updated! ✅",
+          title: "Profile updated",
           description: "Your profile has been successfully updated.",
         })
       } else {
@@ -120,15 +122,15 @@ export default function ProfilePage() {
             <CardContent className="space-y-6">
               <div className="flex items-center gap-6">
                 <Avatar className="w-20 h-20 border-4 border-orange-200">
-                  <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.username} />
+                  <AvatarImage src={user?.photoURL || "/placeholder.svg"} alt={user?.displayName || "User"} />
                   <AvatarFallback className="bg-orange-100 text-orange-700 text-xl">
-                    {user.username.charAt(0).toUpperCase()}
+                    {(user?.displayName || user?.email || "U").charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900">{user.username}</h3>
-                  <p className="text-gray-600">{user.email}</p>
-                  <p className="text-sm text-gray-500 mt-1">Member since October 2024</p>
+                  <h3 className="text-xl font-semibold text-gray-900">{user?.displayName || user?.email || "User"}</h3>
+                  <p className="text-gray-600">{user?.email}</p>
+                  <p className="text-sm text-gray-500 mt-1">Member since {new Date(user?.metadata?.creationTime || "").toLocaleDateString()}</p>
                 </div>
               </div>
 
@@ -244,7 +246,25 @@ export default function ProfilePage() {
                   Terms and Conditions
                 </Button>
 
-                <Button variant="destructive" className="w-full justify-start" onClick={logout}>
+                <Button
+                  variant="destructive"
+                  className="w-full justify-start"
+                  onClick={async () => {
+                    try {
+                      await signOut(auth)
+                      toast({
+                        title: "Signed out",
+                        description: "You have been successfully signed out.",
+                      })
+                    } catch (error) {
+                      toast({
+                        title: "Error",
+                        description: "Failed to sign out.",
+                        variant: "destructive",
+                      })
+                    }
+                  }}
+                >
                   <LogOut className="w-4 h-4 mr-2" />
                   Log out
                 </Button>
