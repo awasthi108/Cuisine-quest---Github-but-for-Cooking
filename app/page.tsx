@@ -153,7 +153,7 @@ export default function HomePage() {
 
           {/* Top Chefs Carousel */}
           <div>
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">Top Chefs</h2>
+            <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-4">Top Chefs</h2>
             <ChefCarousel />
           </div>
 

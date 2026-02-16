@@ -294,7 +294,8 @@ export default function RecipeDetailPage() {
                           onClick={() => startTimer(3, index)}
                           className="border-slate-200 hover:bg-slate-50"
                         >
-                          <Clock className="w-3 h-3 mr-1" />3 min
+                          <Clock className="w-3 h-3 mr-1" />
+                          3 min
                         </Button>
                         <Button
                           size="sm"
